@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.telephony.TelephonyManager;
 
 /**
- * Created by maaakbar on 1/30/16.
+ * This is for configuration in app
  */
 public class AppConfig {
     private static String preference = "SMS_pref";
@@ -35,8 +35,8 @@ public class AppConfig {
 
     public static String getImeiNum(Context context){
         TelephonyManager mngr = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
-        return mngr.getDeviceId();
-        //return "987654321";
+//        return mngr.getDeviceId();
+        return "359734050001172";
     }
 
     public static void storeAccount(Context context, String username, String pass){
@@ -52,11 +52,5 @@ public class AppConfig {
 
     public static int getLocalAppVersion(Context context){
         return context.getResources().getInteger(R.integer.version);
-    }
-
-    public static boolean isVersionOutDate(Context context){
-        SharedPreferences preferences = getDefaultPreferences(context);
-        int key = preferences.getInt(versionKey, 1);
-        return getLocalAppVersion(context) >= key;
     }
 }

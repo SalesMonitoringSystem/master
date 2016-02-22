@@ -12,6 +12,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Binder;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -33,14 +34,16 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
 /**
- * Created by maaakbar on 2/12/16.
+ * The background service
  */
-public class ReportingService extends Service implements LocationListener {
+public class ReportingService extends Service{
     public final static int NOTIFICATION_ID = 2;
     final String TAG = "Reporting Service";
     private final IBinder mBinder = new LocalBinder();
@@ -48,8 +51,19 @@ public class ReportingService extends Service implements LocationListener {
     public GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
 
-    // status
-    boolean running;
+    boolean isRunning = false;
+    Handler handler;
+    Runnable location_updater = new Runnable() {
+        @Override
+        public void run() {
+            if (checkPermission()) {
+                Log.i(TAG, "startTracking");
+                Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                        mGoogleApiClient);
+                sendUpdateLocation(mLastLocation);
+            } else Log.i(TAG, "Permission needed");
+        }
+    };
 
     public class LocalBinder extends Binder {
         public ReportingService getService() {
@@ -60,6 +74,7 @@ public class ReportingService extends Service implements LocationListener {
     @Override
     public void onCreate() {
         super.onCreate();
+        handler = new Handler();
         mLocationRequest = createLocationRequest();
     }
 
@@ -159,7 +174,11 @@ public class ReportingService extends Service implements LocationListener {
 
     boolean dismissNotification(){
         // update UI
-        stopForeground(true);
+        try {
+            stopForeground(true);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return false;
     }
 
@@ -181,10 +200,7 @@ public class ReportingService extends Service implements LocationListener {
     public void startLocationUpdates() {
         Log.i(TAG, "startTracking.1");
         if (mGoogleApiClient!=null) {
-            if (checkPermission()) {
-                Log.i(TAG, "startTracking");
-                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-            } else Log.i(TAG, "Permission needed");
+            location_updater.run();
         }
     }
 
@@ -192,7 +208,7 @@ public class ReportingService extends Service implements LocationListener {
         Log.i(TAG, "stopTracking.1");
         if (mGoogleApiClient!=null) {
             Log.i(TAG, "stopTracking");
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            handler.removeCallbacks(location_updater);
         }
     }
 
@@ -205,8 +221,7 @@ public class ReportingService extends Service implements LocationListener {
         return mLocationRequest;
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
+    private void sendUpdateLocation(Location location) {
         Log.i(TAG, "onLocationChanged "+location.getLongitude());
 
         Geocoder geocoder;
@@ -237,7 +252,21 @@ public class ReportingService extends Service implements LocationListener {
 
             @Override
             public void postEvent(String... result) {
-
+                try {
+                    int nextUpdate = NetHelper.getNextUpdateSchedule(result[0]); // in second
+                    Log.i(TAG, "next is in " + nextUpdate + " seconds");
+                    if (nextUpdate > 60) {
+                        dismissNotification();
+                        isRunning = false;
+                    } else if (!isRunning){
+                        showNotification();
+                        isRunning = true;
+                    }
+                    handler.postDelayed(location_updater, nextUpdate * 1000 /*millisecond*/);
+                }catch (JSONException e){
+                    Log.i(TAG, "postEvent error update");
+                    e.printStackTrace();
+                }
             }
         });
     }

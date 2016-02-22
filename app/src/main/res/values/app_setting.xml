@@ -25,7 +25,7 @@
 
     <!--Tracking Text-->
     <integer name="interval">60</integer> <!--in seconds-->
-    <integer name="fast_interval">30</integer> <!--in seconds-->
+    <integer name="fast_interval">15</integer> <!--in seconds-->
     <string name="ticker">Tracking Started</string>
     <string name="tracked">Tracked</string>
     <string name="untracked">Not Tracked</string>

@@ -9,6 +9,7 @@ import com.buahbatu.toyotasalesman.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -16,7 +17,7 @@ import java.net.URL;
 import cz.msebera.android.httpclient.entity.mime.MultipartEntityBuilder;
 
 /**
- * Created by maaakbar on 1/30/16.
+ * This is a helper in network communication
  */
 public class NetHelper {
     final static String TAG = "NetHelper";
@@ -90,4 +91,12 @@ public class NetHelper {
         // return "user";
     }
 
+    public static int getNextUpdateSchedule(String result) throws JSONException{
+        JSONObject object = new JSONObject(result);
+        switch (object.getString("status")){
+            case "success": return 60;
+            case "failed": return object.getInt("next");
+        }
+        return 10;
+    }
 }
