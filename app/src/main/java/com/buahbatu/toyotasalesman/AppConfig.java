@@ -35,8 +35,8 @@ public class AppConfig {
 
     public static String getImeiNum(Context context){
         TelephonyManager mngr = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
-//        return mngr.getDeviceId();
-        return "359734050001172";
+        return mngr.getDeviceId();
+//        return "359734050001172";
     }
 
     public static void storeAccount(Context context, String username, String pass){
