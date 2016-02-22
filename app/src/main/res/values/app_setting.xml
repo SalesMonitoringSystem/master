@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Default account-->
+    <string name="default_user">SLS-02</string>
+    <string name="default_pass">SLS-02</string>
+    <string name="default_imei">987654321</string>
+
+    <!--Domain Setting-->
+    <string name="default_domain">toyota-sm.openlearning.club/ToyotaSM_mobile</string>
+    <string name="default_protocol">http://</string>
+    <string name="login_url">/Login_mobile</string>
+    <string name="report_url">/inputKoordinat</string>
+    <!--<string name="trigger">/login</string>-->
+
+    <!--post key-->
+    <string name="api_coordinate">coor</string>
+    <string name="api_location">location</string>
+    <string name="api_username">usr</string>
+    <string name="api_password">pass</string>
+    <string name="api_imei">imei</string>
+    <string name="api_alamat">alamat</string>
+
+    <!--Response tag-->
+    <string name="api_response">response</string>
+
+    <!--Tracking Text-->
+    <integer name="interval">60</integer> <!--in seconds-->
+    <integer name="fast_interval">30</integer> <!--in seconds-->
+    <string name="ticker">Tracking Started</string>
+    <string name="tracked">Tracked</string>
+    <string name="untracked">Not Tracked</string>
+
+    Version Control
+    <integer name="version">1</integer>
+</resources>
