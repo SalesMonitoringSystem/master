@@ -266,6 +266,7 @@ public class ReportingService extends Service{
                 }catch (JSONException e){
                     Log.i(TAG, "postEvent error update");
                     e.printStackTrace();
+                    handler.postDelayed(location_updater, getResources().getInteger(R.integer.interval) * 1000 /*millisecond*/);
                 }
             }
         });

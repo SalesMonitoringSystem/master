@@ -97,6 +97,6 @@ public class NetHelper {
             case "success": return 60;
             case "failed": return object.getInt("next");
         }
-        return 10;
+        return 60;
     }
 }
